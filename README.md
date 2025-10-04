@@ -49,7 +49,7 @@ pip install -r requirements.txt
 Crear un archivo `.env` en la raíz del proyecto con:
 ```
 BACKEND_HOST=localhost
-BACKEND_PORT=5000
+BACKEND_PORT=8000
 BACKEND_PROTOCOL=http
 
 FRONTEND_HOST=localhost

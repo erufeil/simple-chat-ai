@@ -4,6 +4,7 @@ from flask_cors import CORS
 import requests
 import os
 from dotenv import load_dotenv
+import logging
 
 # Cargar variables de entorno desde el archivo .env
 load_dotenv()
@@ -15,6 +16,13 @@ CORS(app)
 # Configurar la URL del endpoint de LocalAI usando variables de entorno
 LOCAL_AI_URL = f"{os.getenv('IA_PROTOCOL')}://{os.getenv('IA_HOST')}/v1/completions"
 
+# Configuración del logging para depuración
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%H:%M:%S'
+)
+
 # Ruta principal que sirve el archivo index.html
 @app.route('/')
 def index():
@@ -25,6 +33,7 @@ def index():
 def chat():
     # Obtener el mensaje enviado por el usuario desde el request
     data = request.json
+    logging.debug(f"variable: {data}")
     
     # Preparar el payload para LocalAI siguiendo su formato específico
     payload = {
@@ -32,16 +41,19 @@ def chat():
         "messages": [{"role": "user", "content": data['message']}],
         "temperature": 0.7  # Control de creatividad en las respuestas
     }
+    logging.debug(f"variable: {payload}")
 
     # Enviar la petición a LocalAI y obtener la respuesta
     response = requests.post(LOCAL_AI_URL, json=payload)
     ai_response = response.json()
+    logging.debug(f"variable: {ai_response}")
     
     # Devolver solo el contenido de la respuesta al frontend
     return jsonify({"response": ai_response['choices'][0]['message']['content']})
 
 # Punto de entrada principal de la aplicación
 if __name__ == '__main__':
+    logging.debug(f"variable: {os.getenv('BACKEND_HOST')}:{int(os.getenv('BACKEND_PORT'))}")
     app.run(
         host=os.getenv('BACKEND_HOST'),
         port=int(os.getenv('BACKEND_PORT'))
